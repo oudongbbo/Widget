@@ -1,0 +1,54 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    defaultConfig {
+        applicationId "com.yb.maya.sjjx.bm"
+        minSdkVersion 17
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+
+
+        multiDexEnabled true    // true时，生成多个dex
+        setMultiDexKeepFile file("multiDexKeep.txt")        // 当前项目中指定的classes，编译到class.dex中
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+    buildToolsVersion '25.0.0'
+
+
+
+    //方法数超过30000则进行dex拆分
+    dexOptions {
+        javaMaxHeapSize "4g"
+        preDexLibraries = false
+        additionalParameters = ['--multi-dex',
+                                '--main-dex-list=' + project.rootDir.absolutePath + '/demo_bamen/multiDexKeep.txt',
+                                '--minimal-main-dex']
+    }
+
+
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    //compile project(':library_leidong')
+    compile(name: 'library_bamen', ext: 'aar')
+    compile(name: 'library_leidong', ext: 'aar')
+    compile 'com.android.support:multidex:1.0.1'
+
+}
